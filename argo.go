@@ -1,7 +1,5 @@
 package argo
 
-import "log"
-
 // NotificationReceiver allows to receive Notifications
 type NotificationReceiver interface {
 	Receive() (Notification, error)
@@ -20,34 +18,35 @@ type NotificationHandler interface {
 	Completed(GID []string)
 	BtCompleted(GID []string)
 	Error(GID []string)
+	ReceptionError(error) bool // if true, stop receiving notifications
+	OtherIdentifier(Identifier string, GID []string)
 }
 
-func GetNotifications(conn NotificationReceiver, n NotificationHandler) (err error) {
+func GetNotifications(conn NotificationReceiver, h NotificationHandler) error {
 	for {
 		notification, err := conn.Receive()
 		if err != nil {
-			if err == ErrConnIsClosed {
-				return nil
+			if h.ReceptionError(err) {
+				return err
 			}
-			log.Println("reading ws:", err)
 			continue
 		}
 		gid := notification.GID()
 		switch notification.Identifier() {
 		case "aria2.onDownloadStart":
-			n.Started(gid)
+			h.Started(gid)
 		case "aria2.onDownloadPause":
-			n.Paused(gid)
+			h.Paused(gid)
 		case "aria2.onDownloadStop":
-			n.Stopped(gid)
+			h.Stopped(gid)
 		case "aria2.onDownloadComplete":
-			n.Completed(gid)
+			h.Completed(gid)
 		case "aria2.onDownloadError":
-			n.Error(gid)
+			h.Error(gid)
 		case "aria2.onBtDownloadComplete":
-			n.BtCompleted(gid)
+			h.BtCompleted(gid)
 		default:
-			log.Printf("unexpected notification: %s: %#v\n", notification.Identifier(), notification)
+			h.OtherIdentifier(notification.Identifier(), gid)
 		}
 	}
 }

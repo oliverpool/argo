@@ -16,11 +16,8 @@ func (j Receiver) Receive() (notif argo.Notification, err error) {
 }
 
 func (j Receiver) receive() (notif rpc.Notification, err error) {
-	if j.IsClosed() {
-		err = argo.ErrConnIsClosed
-		return
-	}
 	err = j.Conn.ReadJSON(&notif)
+	err = rpc.ConvertClosedNetworkConnectionError(err)
 	return
 }
 

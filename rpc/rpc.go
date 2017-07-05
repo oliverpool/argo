@@ -1,5 +1,8 @@
 package rpc
 
+import "net"
+import "github.com/oliverpool/argo"
+
 // Request represents a JSON-RPC request sent by a client.
 type Request struct {
 	// JSON-RPC protocol.
@@ -65,4 +68,18 @@ func (r Notification) GID() []string {
 		gid[i] = g.GID
 	}
 	return gid
+}
+
+func IsClosedNetworkConnectionError(err error) bool {
+	if e, ok := err.(*net.OpError); ok {
+		return "use of closed network connection" == e.Err.Error()
+	}
+	return false
+}
+
+func ConvertClosedNetworkConnectionError(err error) error {
+	if IsClosedNetworkConnectionError(err) {
+		return argo.ErrConnIsClosed
+	}
+	return err
 }

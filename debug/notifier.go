@@ -1,6 +1,12 @@
 package debug
 
-import "log"
+import (
+	"log"
+
+	"net"
+
+	"github.com/oliverpool/argo"
+)
 
 type NotificationReceiver struct {
 	Logger *log.Logger
@@ -23,4 +29,19 @@ func (d NotificationReceiver) Error(GID []string) {
 }
 func (d NotificationReceiver) BtCompleted(GID []string) {
 	d.Logger.Printf("bt %s completed.\n", GID)
+}
+func (d NotificationReceiver) OtherIdentifier(ident string, GID []string) {
+	d.Logger.Printf("Unknown %s for %s.\n", ident, GID)
+}
+func (d NotificationReceiver) ReceptionError(err error) bool {
+	if err == argo.ErrConnIsClosed {
+		d.Logger.Printf("ConnClosed.\n")
+		return true
+	}
+	d.Logger.Printf("Notification error %#v.\n", err)
+	if e, ok := err.(*net.OpError); ok {
+		d.Logger.Printf("NetOp %s.\n", e.Err.Error())
+
+	}
+	return false
 }

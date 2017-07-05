@@ -14,11 +14,11 @@ func New() Aria2 {
 	a := Aria2{
 		Name: "aria2c",
 	}
-	a.Option(EnableRPC, Port("6800"), Log("warn"))
+	a.Option(EnableRPC, Log("warn"))
 	return a
 }
 
-func (a Aria2) Command() *exec.Cmd {
+func (a Aria2) Cmd() *exec.Cmd {
 	return exec.Command(a.Name, a.args...)
 }
 

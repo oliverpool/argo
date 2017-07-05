@@ -1,9 +1,6 @@
 package websocket
 
-import (
-	"github.com/oliverpool/argo"
-	"github.com/oliverpool/argo/rpc"
-)
+import "github.com/oliverpool/argo/rpc"
 
 // Caller allows to send RPCCalls to an URL
 type Caller struct {
@@ -12,26 +9,18 @@ type Caller struct {
 
 // Call performs the RPCRequest
 func (j Caller) Call(v rpc.Request) (reply rpc.Response, err error) {
-	err = j.send(v)
-	if err != nil {
-		return
-	}
-	err = j.receive(&reply)
+	reply, err = j.call(v)
+	err = rpc.ConvertClosedNetworkConnectionError(err)
 	return
 }
 
-func (j Caller) send(v rpc.Request) error {
-	if j.IsClosed() {
-		return argo.ErrConnIsClosed
+func (j Caller) call(v rpc.Request) (reply rpc.Response, err error) {
+	err = j.Conn.WriteJSON(&v)
+	if err != nil {
+		return
 	}
-	return j.Conn.WriteJSON(&v)
-}
-
-func (j Caller) receive(reply *rpc.Response) error {
-	if j.IsClosed() {
-		return argo.ErrConnIsClosed
-	}
-	return j.Conn.ReadJSON(reply)
+	err = j.Conn.ReadJSON(&reply)
+	return
 }
 
 // NewCaller creates a Caller with the websocket.DefaultDialer
