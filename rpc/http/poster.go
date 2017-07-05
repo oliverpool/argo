@@ -9,19 +9,19 @@ import (
 	"github.com/oliverpool/argo/rpc"
 )
 
-// Poster allows to POST an io.Reader to an URL
-type Poster interface {
+// SubPoster allows to POST an io.Reader to an URL
+type SubPoster interface {
 	Post(url string, contentType string, body io.Reader) (*http.Response, error)
 }
 
-// Caller allows to send Calls to an URL
-type Caller struct {
-	Client Poster
+// Poster allows to send rpc.Request via http(s)
+type Poster struct {
+	Client SubPoster
 	URL    string
 }
 
-// Call performs the RPCRequest
-func (j Caller) Call(v rpc.Request) (reply rpc.Response, err error) {
+// Post performs the Request
+func (j Poster) Post(v rpc.Request) (reply rpc.Response, err error) {
 	pay, err := json.Marshal(v)
 	if err != nil {
 		return
@@ -36,13 +36,13 @@ func (j Caller) Call(v rpc.Request) (reply rpc.Response, err error) {
 }
 
 // Close gracefully closes the connection
-func (j Caller) Close() (err error) {
+func (j Poster) Close() (err error) {
 	return nil
 }
 
-// NewCaller creates a Caller with the http.DefaultClient
-func NewCaller(add string) (j Caller, err error) {
-	j = Caller{
+// NewPoster creates a Poster with the http.DefaultClient
+func NewPoster(add string) (j Poster, err error) {
+	j = Poster{
 		Client: http.DefaultClient,
 		URL:    add,
 	}

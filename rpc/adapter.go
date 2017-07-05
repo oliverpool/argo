@@ -3,7 +3,7 @@ package rpc
 import "github.com/oliverpool/argo"
 
 type Adapter struct {
-	Caller Caller
+	Poster Poster
 	Secret string
 }
 
@@ -30,7 +30,7 @@ func (a Adapter) Call(method string, options ...interface{}) (argo.Response, err
 		Params:  params,
 		ID:      id,
 	}
-	resp, err := a.Caller.Call(r)
+	resp, err := a.Poster.Post(r)
 
 	if err == nil && resp.Error.Code != 0 {
 		err = resp.Error
@@ -38,9 +38,9 @@ func (a Adapter) Call(method string, options ...interface{}) (argo.Response, err
 	return resp.Response, err
 }
 
-func Adapt(c Caller, secret string) Adapter {
+func Adapt(c Poster, secret string) Adapter {
 	return Adapter{
-		Caller: c,
+		Poster: c,
 		Secret: secret,
 	}
 }

@@ -25,9 +25,9 @@ type Response struct {
 	Error argo.ResponseError
 }
 
-// Caller allows to perform Requests
-type Caller interface {
-	Call(Request) (Response, error)
+// Poster allows to perform Requests
+type Poster interface {
+	Post(Request) (Response, error)
 	Close() error
 }
 

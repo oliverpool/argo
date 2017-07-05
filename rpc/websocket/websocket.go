@@ -10,17 +10,10 @@ import (
 type Websocket struct {
 	Conn      *websocket.Conn
 	WriteWait time.Duration
-	isClosed  bool
-}
-
-// IsClosed indicated if the connection has been closed
-func (w Websocket) IsClosed() bool {
-	return w.isClosed
 }
 
 // Close gracefully closes the connection (with a CloseMessage)
 func (w *Websocket) Close() (err error) {
-	w.isClosed = true
 	defer func() {
 		berr := w.Conn.Close()
 		if err == nil {

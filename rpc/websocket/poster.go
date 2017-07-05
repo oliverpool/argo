@@ -2,19 +2,19 @@ package websocket
 
 import "github.com/oliverpool/argo/rpc"
 
-// Caller allows to send RPCCalls to an URL
-type Caller struct {
+// Poster allows to send rpc.Request via Websocket
+type Poster struct {
 	*Websocket
 }
 
-// Call performs the RPCRequest
-func (j Caller) Call(v rpc.Request) (reply rpc.Response, err error) {
-	reply, err = j.call(v)
+// Post performs the Request
+func (j Poster) Post(v rpc.Request) (reply rpc.Response, err error) {
+	reply, err = j.post(v)
 	err = rpc.ConvertClosedNetworkConnectionError(err)
 	return
 }
 
-func (j Caller) call(v rpc.Request) (reply rpc.Response, err error) {
+func (j Poster) post(v rpc.Request) (reply rpc.Response, err error) {
 	err = j.Conn.WriteJSON(&v)
 
 	for reply.Response.GID == "" && err == nil {
@@ -24,10 +24,10 @@ func (j Caller) call(v rpc.Request) (reply rpc.Response, err error) {
 	return
 }
 
-// NewCaller creates a Caller with the websocket.DefaultDialer
-func NewCaller(add string) (j *Caller, err error) {
+// NewPoster creates a Poster with the websocket.DefaultDialer
+func NewPoster(add string) (j *Poster, err error) {
 	w, err := NewWebsocket(add)
-	j = &Caller{
+	j = &Poster{
 		w,
 	}
 	return
