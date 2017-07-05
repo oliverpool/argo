@@ -1,16 +1,10 @@
 package rpc
 
 import (
-	"context"
 	"encoding/base64"
 	"errors"
 	"io/ioutil"
-	"log"
 	"net/url"
-	"os/exec"
-	"time"
-
-	"github.com/oliverpool/argo"
 )
 
 // Option is a container for specifying Call parameters and returning results
@@ -55,77 +49,6 @@ func New(s ...string) (proto Protocol, err error) {
 		return
 	}
 	proto = &client{caller: caller, url: u, token: token}
-	return
-}
-
-// Call sends a request of rpc to aria2 daemon
-func (id *client) Call(method string, params, reply interface{}) (err error) {
-	err = id.call(method, params, reply)
-	return
-}
-
-func (id *client) SetNotifier(ctx context.Context, conn argo.JSONReadCloser, n Notifier) (err error) {
-	defer conn.Close()
-	var request struct {
-		Version string  `json:"jsonrpc"`
-		Method  string  `json:"method"`
-		Params  []Event `json:"params"`
-	}
-	errChan := make(chan error)
-	for {
-		select {
-		case <-ctx.Done():
-			return
-		default:
-		}
-
-		if err = conn.ReadJSON(&request); err != nil {
-			log.Println("reading ws:", err)
-			continue
-		}
-		switch request.Method {
-		case "aria2.onDownloadStart":
-			n.OnStart(request.Params)
-		case "aria2.onDownloadPause":
-			n.OnPause(request.Params)
-		case "aria2.onDownloadStop":
-			n.OnStop(request.Params)
-		case "aria2.onDownloadComplete":
-			n.OnComplete(request.Params)
-		case "aria2.onDownloadError":
-			n.OnError(request.Params)
-		case "aria2.onBtDownloadComplete":
-			n.OnBtComplete(request.Params)
-		default:
-			log.Printf("unexpected notification: %s\n", request.Method)
-		}
-	}
-}
-
-// LaunchAria2cDaemon launchs aria2 daemon to listen for RPC calls, locally.
-func (id *client) LaunchAria2cDaemon() (info VersionInfo, err error) {
-	if info, err = id.GetVersion(); err == nil {
-		return
-	}
-	args := []string{"--enable-rpc", "--rpc-listen-all"}
-	if id.token != "" {
-		args = append(args, "--rpc-secret="+id.token)
-	}
-	cmd := exec.Command("aria2c", args...)
-	if err = cmd.Start(); err != nil {
-		return
-	}
-	cmd.Process.Release()
-	timeout := false
-	timer := time.AfterFunc(time.Second, func() {
-		timeout = true
-	})
-	for !timeout {
-		if info, err = id.GetVersion(); err == nil {
-			break
-		}
-	}
-	timer.Stop()
 	return
 }
 
