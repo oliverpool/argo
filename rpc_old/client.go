@@ -1,6 +1,7 @@
 package rpc
 
 import (
+	"context"
 	"encoding/base64"
 	"errors"
 	"io/ioutil"
@@ -9,7 +10,7 @@ import (
 	"os/exec"
 	"time"
 
-	"github.com/gorilla/websocket"
+	"github.com/oliverpool/argo"
 )
 
 // Option is a container for specifying Call parameters and returning results
@@ -63,49 +64,42 @@ func (id *client) Call(method string, params, reply interface{}) (err error) {
 	return
 }
 
-func (id *client) SetNotifier(n Notifier) (err error) {
-	uri := *id.url
-	uri.Scheme = "ws"
-	ws, _, err := websocket.DefaultDialer.Dial(uri.String(), nil)
-	if err != nil {
-		return
+func (id *client) SetNotifier(ctx context.Context, conn argo.JSONReadCloser, n Notifier) (err error) {
+	defer conn.Close()
+	var request struct {
+		Version string  `json:"jsonrpc"`
+		Method  string  `json:"method"`
+		Params  []Event `json:"params"`
 	}
-	go func() {
-		defer ws.Close()
-		var request struct {
-			Version string  `json:"jsonrpc"`
-			Method  string  `json:"method"`
-			Params  []Event `json:"params"`
+	errChan := make(chan error)
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		default:
 		}
-		var err error
-		for {
-			if err = ws.ReadJSON(&request); err != nil {
-				log.Println("reading ws:", err)
-				continue
-			}
-			switch request.Method {
-			case "aria2.onDownloadStart":
-				n.OnStart(request.Params)
-			case "aria2.onDownloadPause":
-				n.OnPause(request.Params)
-			case "aria2.onDownloadStop":
-				n.OnStop(request.Params)
-			case "aria2.onDownloadComplete":
-				n.OnComplete(request.Params)
-			case "aria2.onDownloadError":
-				n.OnError(request.Params)
-			case "aria2.onBtDownloadComplete":
-				n.OnBtComplete(request.Params)
-			default:
-				log.Printf("unexpected notification: %s\n", request.Method)
-			}
+
+		if err = conn.ReadJSON(&request); err != nil {
+			log.Println("reading ws:", err)
+			continue
 		}
-		err = ws.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
-		if err != nil {
-			log.Println("closing ws:", err)
+		switch request.Method {
+		case "aria2.onDownloadStart":
+			n.OnStart(request.Params)
+		case "aria2.onDownloadPause":
+			n.OnPause(request.Params)
+		case "aria2.onDownloadStop":
+			n.OnStop(request.Params)
+		case "aria2.onDownloadComplete":
+			n.OnComplete(request.Params)
+		case "aria2.onDownloadError":
+			n.OnError(request.Params)
+		case "aria2.onBtDownloadComplete":
+			n.OnBtComplete(request.Params)
+		default:
+			log.Printf("unexpected notification: %s\n", request.Method)
 		}
-	}()
-	return
+	}
 }
 
 // LaunchAria2cDaemon launchs aria2 daemon to listen for RPC calls, locally.

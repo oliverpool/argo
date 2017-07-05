@@ -10,7 +10,7 @@ aria2 RPC in #Go
 
 ## Install
 
-`go get github.com/zyxar/argo/rpc`
+`go get github.com/zyxar/argo/...`
 
 
 ## Interface
@@ -42,7 +42,7 @@ aria2 RPC in #Go
   GetGlobalOption() (o Option, err error)
   ChangeGlobalOption(options Option) (msg string, err error)
   GetGlobalStat() (o Option, err error)
-  PurgeDowloadResult() (msg string, err error)
+  PurgeDownloadResult() (msg string, err error)
   RemoveDownloadResult(gid string) (msg string, err error)
   GetVersion() (o Option, err error)
   GetSessionInfo() (o Option, err error)
