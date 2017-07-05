@@ -21,3 +21,17 @@ type NotificationHandler interface {
 	ReceptionError(error) bool // if true, stop receiving notifications
 	OtherIdentifier(Identifier string, GID []string)
 }
+
+// Response represents a JSON-RPC response to a request
+type Response struct {
+	GID string `json:"result"` // GID of the download
+	ID  string `json:"id"`
+}
+
+// ID allows to identify a request
+type ID string
+
+// Caller allows to perform Requests
+type Caller interface {
+	Call(method string, params ...interface{}) (Response, error)
+}

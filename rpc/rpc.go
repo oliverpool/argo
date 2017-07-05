@@ -21,15 +21,8 @@ type Request struct {
 
 // Response represents a JSON-RPC response to a request
 type Response struct {
-	GID   string `json:"result"` // GID of the download
-	ID    string `json:"id"`
-	Error ResponseError
-}
-
-// ResponseError indicates the error encountered
-type ResponseError struct {
-	Code    int64  `json:"code"`
-	Message string `json:"message"`
+	argo.Response
+	Error argo.ResponseError
 }
 
 // Caller allows to perform Requests

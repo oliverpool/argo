@@ -16,10 +16,11 @@ func (j Caller) Call(v rpc.Request) (reply rpc.Response, err error) {
 
 func (j Caller) call(v rpc.Request) (reply rpc.Response, err error) {
 	err = j.Conn.WriteJSON(&v)
-	if err != nil {
-		return
+
+	for reply.Response.GID == "" && err == nil {
+		// The first response might not be the aknowledgement (but onDownloadStart for instance)
+		err = j.Conn.ReadJSON(&reply)
 	}
-	err = j.Conn.ReadJSON(&reply)
 	return
 }
 
