@@ -46,8 +46,8 @@ func (c Client) Close() (err error) {
 }
 
 func (c Client) mergeOptions(options ...Option) Option {
-	newOption := mergeOptions(options...)
-	return mergeOptions(c.DefaultOption, newOption)
+	customOption := mergeOptions(options...)
+	return mergeOptions(c.DefaultOption, customOption)
 }
 
 func mergeOptions(options ...Option) Option {
