@@ -24,7 +24,11 @@ func Example() {
 		close(done)
 	}()
 
-	time.Sleep(2 * time.Second)
+	fmt.Println("Wait until the adresse is ready to listen")
+	for !daemon.IsRunningOn(":6800") {
+		time.Sleep(time.Second)
+	}
+
 	fmt.Println("Killing daemon (not very nice... prefer to send a aria2.shutdown command)")
 	cmd.Process.Kill()
 	<-done
@@ -34,6 +38,7 @@ func Example() {
 	// Output:
 	// Creating daemon configuration
 	// Launching daemon (in a goroutine)
+	// Wait until the adresse is ready to listen
 	// Killing daemon (not very nice... prefer to send a aria2.shutdown command)
 	// Daemon stopped
 	// [signal: killed: ]
