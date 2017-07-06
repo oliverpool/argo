@@ -41,10 +41,14 @@ func (j Poster) Close() (err error) {
 }
 
 // NewPoster creates a Poster with the http.DefaultClient
-func NewPoster(add string) (j Poster, err error) {
-	j = Poster{
+func NewPoster(add string) Poster {
+	return Poster{
 		Client: http.DefaultClient,
 		URL:    add,
 	}
-	return
+}
+
+// NewAdapter creates a Caller with the http.DefaultClient
+func NewAdapter(address, secret string) rpc.Adapter {
+	return rpc.Adapt(NewPoster(address), secret)
 }

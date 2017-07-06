@@ -38,6 +38,11 @@ func (a Adapter) Call(method string, options ...interface{}) (argo.Response, err
 	return resp.Response, err
 }
 
+// Close gracefully closes the Poster
+func (a Adapter) Close() (err error) {
+	return a.Poster.Close()
+}
+
 func Adapt(c Poster, secret string) Adapter {
 	return Adapter{
 		Poster: c,

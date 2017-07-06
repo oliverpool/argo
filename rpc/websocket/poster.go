@@ -32,3 +32,10 @@ func NewPoster(add string) (j *Poster, err error) {
 	}
 	return
 }
+
+// NewAdapter creates a Caller with the websocket.DefaultDialer
+func NewAdapter(address, secret string) (a rpc.Adapter, err error) {
+	p, err := NewPoster(address)
+	a = rpc.Adapt(p, secret)
+	return
+}

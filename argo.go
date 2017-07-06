@@ -34,4 +34,5 @@ type ID string
 // Caller allows to perform Requests
 type Caller interface {
 	Call(method string, params ...interface{}) (Response, error)
+	Close() error
 }

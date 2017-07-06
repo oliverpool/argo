@@ -13,7 +13,6 @@ import (
 	"github.com/oliverpool/argo/aria2"
 	"github.com/oliverpool/argo/daemon"
 	"github.com/oliverpool/argo/debug"
-	"github.com/oliverpool/argo/rpc"
 	"github.com/oliverpool/argo/rpc/http"
 	"github.com/oliverpool/argo/rpc/websocket"
 )
@@ -27,7 +26,7 @@ func main() {
 	flag.Parse()
 
 	var err error
-	var j2, jhttp rpc.Poster
+	var j2, jhttpr argo.Caller
 
 	aria := daemon.New()
 	secret := "secret"
@@ -53,17 +52,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	j2, err = websocket.NewPoster(*ariaURL)
+	j2, err = websocket.NewAdapter(*ariaURL, secret)
 	if err != nil {
 		log.Fatal(err)
 	}
-	j2r := rpc.Adapt(j2, secret)
 
-	jhttp, err = http.NewPoster(httpURL)
-	if err != nil {
-		log.Fatal(err)
-	}
-	jhttpr := rpc.Adapt(jhttp, secret)
+	jhttpr = http.NewAdapter(httpURL, secret)
 
 	ctx := context.Background()
 	ctx, cancel := context.WithDeadline(ctx, time.Now().Add(3*time.Second))
@@ -78,7 +72,7 @@ func main() {
 			panic(err)
 		}
 		log.Printf("%#v", reply)
-		reply, err = j2r.Call("aria2.addUri", uri, argo.ID("-1"))
+		reply, err = j2.Call("aria2.addUri", uri, argo.ID("-1"))
 		if err != nil {
 			panic(err)
 		}

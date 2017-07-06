@@ -43,10 +43,6 @@ type Notification struct {
 	Params []struct {
 		GID string `json:"gid"` // GID of the download
 	} `json:"params"`
-
-	// The request id. This can be of any type. It is used to match the
-	// response with the request that it is replying to.
-	ID string `json:"id"`
 }
 
 // Identifier returns the rpc method
