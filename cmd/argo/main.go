@@ -9,6 +9,8 @@ import (
 
 	"strings"
 
+	"io/ioutil"
+
 	"github.com/oliverpool/argo"
 	"github.com/oliverpool/argo/aria2"
 	"github.com/oliverpool/argo/daemon"
@@ -27,7 +29,7 @@ func main() {
 	flag.Parse()
 
 	var err error
-	var j2, jhttpr argo.Caller
+	var j2, jhttpr argo.Client
 
 	aria := daemon.New()
 	secret := "secret"
@@ -53,12 +55,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	j2, err = websocket.NewAdapter(*ariaURL, secret)
+	j2, err = websocket.NewClient(*ariaURL, secret)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	jhttpr = http.NewAdapter(httpURL, secret)
+	jhttpr = http.NewClient(httpURL, secret)
 
 	ctx := context.Background()
 	ctx, cancel := context.WithDeadline(ctx, time.Now().Add(3*time.Second))
@@ -77,29 +79,38 @@ func main() {
 			}
 	*/
 
-	uri1 := []string{"https://static.ranchcomputing.com/css/topbar.1.css"}
+	uri1 := []string{"http://bitlove.org/nitramred/staatsbuergerkunde-opus/SBK064_Mauerweg.opus.torrent"}
 	uri2 := []string{"https://static.ranchcomputing.com/css/topbar.1.css"}
 	uri3 := []string{"https://static.ranchcomputing.com/css/topbar.1.css"}
+
+	_ = uri1
+
+	torrentContent, err := ioutil.ReadFile("/home/olivier/Downloads/temp/SBK064_Mauerweg.opus.torrent")
+	if err != nil {
+		panic(err)
+	}
+	_ = torrentContent
 
 	go func() {
 
 		//uri := []string{"https://static.ranchcomputing.com/css/topbar.1.css"}
 
-		reply, err := jhttpr.Call("aria2.addUri", uri1, dir)
+		// reply, err := jhttpr.AddUri(uri1, dir, argo.Option{"id": "torrent"})
+		reply, err := jhttpr.AddTorrent(torrentContent, dir)
 		if err != nil {
 			log.Printf("%#v", err)
 			panic(err)
 		}
 		log.Printf("%#v", reply)
 
-		reply, err = jhttpr.Call("aria2.addUri", uri2, dir)
+		reply, err = jhttpr.AddUri(uri2, dir)
 		if err != nil {
 			log.Printf("%#v", err)
 			panic(err)
 		}
 		log.Printf("%#v", reply)
 
-		reply, err = jhttpr.Call("aria2.addUri", uri3, dir0)
+		reply, err = jhttpr.AddUri(uri3, dir0)
 		if err != nil {
 			log.Printf("%#v", err)
 			panic(err)
@@ -113,7 +124,7 @@ func main() {
 
 	aria2.ForwardNotifications(j, notifier)
 
-	reply, err := jhttpr.Call("aria2.shutdown")
+	reply, err := jhttpr.Shutdown()
 	if err != nil {
 		panic(err)
 	}

@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/oliverpool/argo"
 	"github.com/oliverpool/argo/rpc"
 )
 
@@ -51,4 +52,11 @@ func NewPoster(add string) Poster {
 // NewAdapter creates a Caller with the http.DefaultClient
 func NewAdapter(address, secret string) rpc.Adapter {
 	return rpc.Adapt(NewPoster(address), secret)
+}
+
+// NewClient creates a Client with the http.DefaultClient
+func NewClient(address, secret string) argo.Client {
+	return argo.Client{
+		Caller: rpc.Adapt(NewPoster(address), secret),
+	}
 }

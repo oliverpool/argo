@@ -20,7 +20,11 @@ var ListenAll = AppendArg("--rpc-listen-all")
 var EnableRPC = AppendArg("--enable-rpc")
 
 func Secret(secret string) option {
-	return AppendArg("--rpc-secret=" + secret)
+	if secret != "" {
+		return AppendArg("--rpc-secret=" + secret)
+	} else {
+		return AppendArg()
+	}
 }
 
 func Port(port string) option {

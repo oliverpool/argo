@@ -1,6 +1,9 @@
 package websocket
 
-import "github.com/oliverpool/argo/rpc"
+import (
+	"github.com/oliverpool/argo"
+	"github.com/oliverpool/argo/rpc"
+)
 
 // Poster allows to send rpc.Request via Websocket
 type Poster struct {
@@ -38,4 +41,12 @@ func NewAdapter(address, secret string) (a rpc.Adapter, err error) {
 	p, err := NewPoster(address)
 	a = rpc.Adapt(p, secret)
 	return
+}
+
+// NewClient creates a Client with the http.DefaultClient
+func NewClient(address, secret string) (argo.Client, error) {
+	a, err := NewAdapter(address, secret)
+	return argo.Client{
+		Caller: a,
+	}, err
 }
