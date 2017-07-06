@@ -6,15 +6,17 @@ import (
 	"github.com/oliverpool/argo"
 )
 
-// EnableRPC enables JSON-RPC/XML-RPC server. It is strongly recommended to set secret authorization token using daemon.Secret option
+// EnableRPC enables JSON-RPC/XML-RPC server.
+// It is strongly recommended to set secret authorization token using daemon.Secret option
 // See also daemon.Port option
 var EnableRPC = argo.Option{"enable-rpc": true}
 
-// ListenAll listens incoming JSON-RPC/XML-RPC requests on all network interfaces
-// Default: listen only on local loopback interface (when option ommitted)
+// ListenAll listens incoming JSON-RPC/XML-RPC requests on all network interfaces.
+// Default: listen only on local loopback interface (when option ommitted).
 var ListenAll = argo.Option{"rpc-listen-all": true}
 
-// LogLevel to output to console. LEVEL is either debug, info, notice, warn or error. Default: notice
+// LogLevel to output to console. LEVEL is either debug, info, notice, warn or error.
+// Default: notice (when option ommitted)
 func LogLevel(level string) argo.Option {
 	return argo.Option{"console-log-level": level}
 }
@@ -27,15 +29,15 @@ func Secret(secret string) argo.Option {
 	return argo.Option{}
 }
 
-// Port specifies a port number for JSON-RPC/XML-RPC server to listen to
-// Possible Values: 1024 -65535
+// Port specifies a port number for JSON-RPC/XML-RPC server to listen to.
+// Possible Values: 1024 -65535.
 // Default: 6800 (when option ommitted)
 func Port(port string) argo.Option {
 	return argo.Option{"rpc-listen-port": port}
 }
 
-// Option applies some options on the command
-// Usage: a.Option(daemon.Port("6800"), daemon.ListenAll)
+// Option applies some options on the command.
+//   aria2.Option(daemon.Port("6800"), daemon.ListenAll)
 func (a *Aria2) Option(opts ...argo.Option) {
 	for _, opt := range opts {
 		for k, raw := range opt {
@@ -56,17 +58,16 @@ func (a *Aria2) Option(opts ...argo.Option) {
 
 type cmdOption func(a *Aria2)
 
-// CmdOption applies some options on the command
-// For standard option, argo.Option{"dir":"/tmp"} is preferred
-// Usage: a.CmdOption(daemon.AppendArg("some_raw_arg"))
+// CmdOption applies some cmdOptions on the command.
+//   aria2.CmdOption(daemon.AppendArg("some_raw_arg"))
 func (a *Aria2) CmdOption(opts ...cmdOption) {
 	for _, opt := range opts {
 		opt(a)
 	}
 }
 
-// AppendArg creates an option to appends string to the command line
-// Usage: a.CmdOption(daemon.AppendArg("some_raw_arg"))
+// AppendArg creates an cmdOption to appends string to the command line.
+//   aria2.CmdOption(daemon.AppendArg("some_raw_arg"))
 func AppendArg(args ...string) cmdOption {
 	return func(a *Aria2) {
 		a.args = append(a.args, args...)
