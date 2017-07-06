@@ -1,5 +1,7 @@
 package argo
 
+import "fmt"
+
 // NotificationReceiver allows to receive Notifications
 type NotificationReceiver interface {
 	Receive() (Notification, error)
@@ -35,13 +37,12 @@ type Caller interface {
 }
 
 // Option allows to pass custom options
+//
 type Option map[string]interface{}
 
 func (o Option) getString(key string) string {
 	if v, ok := o[key]; ok {
-		if s, ok := v.(string); ok {
-			return s
-		}
+		return fmt.Sprintf("%v", v)
 	}
 	return ""
 }

@@ -33,7 +33,7 @@ func main() {
 
 	aria := daemon.New()
 	secret := "secret"
-	aria.Option(daemon.Port("6800"), daemon.Secret(secret), daemon.AppendArg("--max-concurrent-downloads=1"))
+	aria.Option(daemon.Port("6800"), daemon.Secret(secret), argo.Option{"max-concurrent-downloads": 1})
 	go func() {
 		out, err := aria.Cmd().CombinedOutput()
 		if err != nil {
@@ -103,7 +103,7 @@ func main() {
 		}
 		log.Printf("%#v", reply)
 
-		reply, err = jhttpr.AddUri(uri2, dir)
+		reply, err = jhttpr.AddUri(uri2, dir, argo.Option{"id": 42})
 		if err != nil {
 			log.Printf("%#v", err)
 			panic(err)
