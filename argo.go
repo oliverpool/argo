@@ -28,11 +28,37 @@ type Response struct {
 	ID  string `json:"id"`
 }
 
-// ID allows to identify a request
-type ID string
-
 // Caller allows to perform Requests
 type Caller interface {
 	Call(method string, params ...interface{}) (Response, error)
 	Close() error
+}
+
+// Option allows to pass custom options
+type Option map[string]interface{}
+
+func (o Option) getString(key string) string {
+	if v, ok := o[key]; ok {
+		if s, ok := v.(string); ok {
+			return s
+		}
+	}
+	return ""
+}
+
+func (o Option) getInt(key string) (int, bool) {
+	if v, ok := o[key]; ok {
+		if s, ok := v.(int); ok {
+			return s, true
+		}
+	}
+	return 0, false
+}
+
+func (o Option) GetID() string {
+	return o.getString("id")
+}
+
+func (o Option) GetPosition() (int, bool) {
+	return o.getInt("position")
 }

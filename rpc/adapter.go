@@ -8,6 +8,17 @@ type Adapter struct {
 }
 
 func (a Adapter) Call(method string, options ...interface{}) (argo.Response, error) {
+	r := a.prepareRequest(method, options...)
+
+	resp, err := a.Poster.Post(r)
+
+	if err == nil && resp.Error.Code != 0 {
+		err = resp.Error
+	}
+	return resp.Response, err
+}
+
+func (a Adapter) prepareRequest(method string, options ...interface{}) Request {
 	params := make([]interface{}, 0, len(options))
 
 	// secret must be first
@@ -15,27 +26,28 @@ func (a Adapter) Call(method string, options ...interface{}) (argo.Response, err
 		params = append(params, "token:"+a.Secret)
 	}
 
-	// extract evcentual ID, insert the rest
+	// id has a separate field
 	id := ""
+	// position must be last
+	var position int
+	var hasPosition bool
+
 	for _, p := range options {
-		if i, ok := p.(argo.ID); ok {
-			id = string(i)
-		} else {
-			params = append(params, p)
+		if o, ok := p.(argo.Option); ok {
+			id = o.GetID()
+			position, hasPosition = o.GetPosition()
 		}
+		params = append(params, p)
 	}
-	r := Request{
+	if hasPosition {
+		params = append(params, position)
+	}
+	return Request{
 		Version: "2.0",
 		Method:  method,
 		Params:  params,
 		ID:      id,
 	}
-	resp, err := a.Poster.Post(r)
-
-	if err == nil && resp.Error.Code != 0 {
-		err = resp.Error
-	}
-	return resp.Response, err
 }
 
 // Close gracefully closes the Poster
