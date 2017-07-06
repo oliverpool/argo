@@ -1,3 +1,4 @@
+// Package daemon simplifies the configuration of the aria2c daemon
 package daemon
 
 import (
@@ -5,28 +6,27 @@ import (
 	"os/exec"
 )
 
+// Aria2 stores the config to launch the daemon
 type Aria2 struct {
 	Name string
 	args []string
 }
 
+// New creates a default daemon configuration
 func New() Aria2 {
 	a := Aria2{
 		Name: "aria2c",
 	}
-	a.Option(EnableRPC, Log("warn"))
+	a.Option(EnableRPC, LogLevel("warn"))
 	return a
 }
 
+// Cmd return the exec.Cmd to launch the aria2c daemon
 func (a Aria2) Cmd() *exec.Cmd {
 	return exec.Command(a.Name, a.args...)
 }
 
-type RunError struct {
-	error
-	CombinedOutput []byte
-}
-
+// IsRunningOn tests if the address is listening for TCP connections
 func IsRunningOn(address string) bool {
 	conn, err := net.Dial("tcp", address)
 	if conn != nil {
@@ -34,33 +34,3 @@ func IsRunningOn(address string) bool {
 	}
 	return err == nil
 }
-
-/*
-
-// LaunchAria2cDaemon launchs aria2 daemon to listen for RPC calls, locally.
-func (id *client) LaunchAria2cDaemon() (info VersionInfo, err error) {
-	if info, err = id.GetVersion(); err == nil {
-		return
-	}
-	args := []string{"--enable-rpc", "--rpc-listen-all"}
-	if id.token != "" {
-		args = append(args, "--rpc-secret="+id.token)
-	}
-	cmd := exec.Command("aria2c", args...)
-	if err = cmd.Start(); err != nil {
-		return
-	}
-	cmd.Process.Release()
-	timeout := false
-	timer := time.AfterFunc(time.Second, func() {
-		timeout = true
-	})
-	for !timeout {
-		if info, err = id.GetVersion(); err == nil {
-			break
-		}
-	}
-	timer.Stop()
-	return
-}
-*/
