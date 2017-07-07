@@ -21,6 +21,7 @@ func Example() {
 
 	// client to send commands (argo.rpc.http subpackage)
 	client := http.NewClient("http://localhost:6800/jsonrpc", "")
+	defer client.Close()
 
 	uri := []string{"http://example.com/"}
 	_, err := client.AddURI(uri)
