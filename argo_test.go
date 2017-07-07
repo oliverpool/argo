@@ -1,57 +1,45 @@
-package argo
+package argo_test
 
 import (
-	"reflect"
-	"testing"
+	"fmt"
+	"os"
+	"time"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/oliverpool/argo/daemon"
+	"github.com/oliverpool/argo/rpc/http"
 )
 
-func TestMergeOption(t *testing.T) {
-	a := assert.New(t)
+func Example() {
+	// Start the daemon (without blocking)
+	cmd := daemon.New().Cmd()
+	cmd.Start()
 
-	cases := []struct {
-		Input    []Option
-		Expected Option
-	}{
-		{
-			Input:    nil,
-			Expected: Option{},
-		},
-		{
-			Input:    []Option{},
-			Expected: Option{},
-		},
-		{
-			Input:    []Option{Option{}},
-			Expected: Option{},
-		},
-		{
-			Input:    []Option{nil},
-			Expected: Option{},
-		},
-		{
-			Input:    []Option{nil, Option{"a": "1"}, nil},
-			Expected: Option{"a": "1"},
-		},
-		{
-			Input:    []Option{Option{"a": "1"}},
-			Expected: Option{"a": "1"},
-		},
-		{
-			Input:    []Option{Option{"a": "1"}, Option{"a": "2"}},
-			Expected: Option{"a": "2"},
-		},
-		{
-			Input:    []Option{Option{"a": "1"}, Option{"b": "2"}},
-			Expected: Option{"a": "1", "b": "2"},
-		},
+	fmt.Println("Waiting for daemon to listen")
+	for !daemon.IsRunningOn(":6800") {
+		time.Sleep(time.Second)
 	}
 
-	for _, c := range cases {
-		actual := mergeOptions(c.Input...)
-		a.Equal(c.Expected, actual)
-		a.True(reflect.DeepEqual(c.Expected, actual))
-	}
+	// client to send commands (argo.rpc.http subpackage)
+	client := http.NewClient("http://localhost:6800/jsonrpc", "")
 
+	uri := []string{"http://example.com/"}
+	_, err := client.AddURI(uri)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("URI added")
+
+	// let some time for the download
+	time.Sleep(time.Second)
+
+	// ask the daemon to shutdown (and wait for its completion)
+	client.Shutdown()
+	cmd.Wait()
+
+	// remove the downloaded file
+	os.Remove("index.html")
+
+	// Output:
+	// Waiting for daemon to listen
+	// URI added
 }

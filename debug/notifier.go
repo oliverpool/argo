@@ -31,14 +31,14 @@ func (d NotificationReceiver) BtCompleted(GID []argo.GID) {
 	d.Logger.Printf("bt %s completed.\n", GID)
 }
 func (d NotificationReceiver) OtherIdentifier(ident string, GID []argo.GID) {
-	d.Logger.Printf("Unknown %s for %s.\n", ident, GID)
+	d.Logger.Printf("unknown %s for %s.\n", ident, GID)
 }
 func (d NotificationReceiver) ReceptionError(err error) bool {
 	if err == argo.ErrConnIsClosed {
-		d.Logger.Printf("ConnClosed.\n")
+		d.Logger.Printf("connection closed.\n")
 		return true
 	}
-	d.Logger.Printf("Notification error %#v.\n", err)
+	d.Logger.Printf("notification error %#v.\n", err)
 	if e, ok := err.(*net.OpError); ok {
 		d.Logger.Printf("NetOp %s.\n", e.Err.Error())
 

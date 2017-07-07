@@ -1,3 +1,4 @@
+// Package argo is a library to communicate with an aria2 (https://aria2.github.io/) daemon in Go.
 package argo
 
 // GID is the identifier aria2 uses for each download.

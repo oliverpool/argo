@@ -58,6 +58,6 @@ func NewAdapter(address, secret string) rpc.Adapter {
 // NewClient creates a Client with the http.DefaultClient
 func NewClient(address, secret string) argo.Client {
 	return argo.Client{
-		Caller: rpc.Adapt(NewPoster(address), secret),
+		Caller: NewAdapter(address, secret),
 	}
 }

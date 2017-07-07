@@ -18,7 +18,7 @@ type NotificationEmitter interface {
 //
 // It can be used with the notification.Forward method of the argo/notification subpackage
 type NotificationHandler interface {
-	ReceptionError(error) bool // if true, stop receiving notifications
+	ReceptionError(error) bool // if true, stop receiving notifications (for instance on ErrConnIsClosed)
 }
 
 // NotificationFullHandler can handle all notifications

@@ -15,14 +15,7 @@ func Example() {
 
 	fmt.Println("Launching daemon (in a goroutine)")
 	cmd := aria2.Cmd()
-
-	done := make(chan struct{})
-	go func() {
-		out, err := cmd.CombinedOutput()
-		fmt.Println("Daemon stopped")
-		fmt.Printf("[%s: %s]\n", err, string(out))
-		close(done)
-	}()
+	cmd.Start()
 
 	fmt.Println("Wait until the adresse is ready to listen")
 	for !daemon.IsRunningOn(":6800") {
@@ -31,7 +24,11 @@ func Example() {
 
 	fmt.Println("Killing daemon (not very nice... prefer to send a aria2.shutdown command)")
 	cmd.Process.Kill()
-	<-done
+	cmd.Wait()
+
+	for daemon.IsRunningOn(":6800") {
+		time.Sleep(time.Second)
+	}
 
 	fmt.Println("Bye")
 
@@ -40,7 +37,5 @@ func Example() {
 	// Launching daemon (in a goroutine)
 	// Wait until the adresse is ready to listen
 	// Killing daemon (not very nice... prefer to send a aria2.shutdown command)
-	// Daemon stopped
-	// [signal: killed: ]
 	// Bye
 }
