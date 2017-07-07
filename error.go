@@ -1,5 +1,6 @@
 package argo
 
+// ErrorString of the argo package
 type ErrorString string
 
 func (e ErrorString) Error() string {
@@ -7,6 +8,7 @@ func (e ErrorString) Error() string {
 }
 
 const (
+	// ErrConnIsClosed happens when a connection is closed
 	ErrConnIsClosed = ErrorString("connection is closed")
 )
 

@@ -2,6 +2,9 @@ package argo
 
 import "fmt"
 
+// A Client is an aria2 client (https://aria2.github.io/)
+//
+// It can be constructed with the http.NewClient method of the subpackage argo/rpc/http
 type Client struct {
 	Caller Caller
 }
@@ -26,6 +29,8 @@ func mergeOptions(options ...Option) Option {
 }
 
 // NotificationReceiver allows to receive Notifications
+//
+// It can be constructed with the websocket.NewReceiver method of the subpackage argo/rpc/websocket
 type NotificationReceiver interface {
 	Receive() (Notification, error)
 }
@@ -36,6 +41,7 @@ type Notification interface {
 	GID() []string // GID of the downloads
 }
 
+// NotificationHandler can handle notifications
 type NotificationHandler interface {
 	Started(GID []string)
 	Paused(GID []string)
@@ -56,13 +62,24 @@ type Caller interface {
 
 // Option allows to pass custom options
 //
+// See the option subpackage
 type Option map[string]interface{}
+
+// GetID returns the "id" value if present (empty string otherwise)
+func (o Option) GetID() string {
+	return o.getString("id")
+}
 
 func (o Option) getString(key string) string {
 	if v, ok := o[key]; ok {
 		return fmt.Sprintf("%v", v)
 	}
 	return ""
+}
+
+// GetPosition returns the "position" value if present
+func (o Option) GetPosition() (int, bool) {
+	return o.getInt("position")
 }
 
 func (o Option) getInt(key string) (int, bool) {
@@ -72,12 +89,4 @@ func (o Option) getInt(key string) (int, bool) {
 		}
 	}
 	return 0, false
-}
-
-func (o Option) GetID() string {
-	return o.getString("id")
-}
-
-func (o Option) GetPosition() (int, bool) {
-	return o.getInt("position")
 }
