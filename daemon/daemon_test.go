@@ -11,14 +11,14 @@ import (
 func Example() {
 	fmt.Println("Creating daemon configuration")
 	aria2 := daemon.New()
-	aria2.Option(daemon.Port("6800"), daemon.Secret("secretToken"), argo.Option{"max-concurrent-downloads": 1})
+	aria2.Option(daemon.Port("6801"), daemon.Secret("secretToken"), argo.Option{"max-concurrent-downloads": 1})
 
 	fmt.Println("Launching daemon (in a goroutine)")
 	cmd := aria2.Cmd()
 	cmd.Start()
 
 	fmt.Println("Wait until the adresse is ready to listen")
-	for !daemon.IsRunningOn(":6800") {
+	for !daemon.IsRunningOn(":6801") {
 		time.Sleep(time.Second)
 	}
 
@@ -26,7 +26,7 @@ func Example() {
 	cmd.Process.Kill()
 	cmd.Wait()
 
-	for daemon.IsRunningOn(":6800") {
+	for daemon.IsRunningOn(":6801") {
 		time.Sleep(time.Second)
 	}
 
