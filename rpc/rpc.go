@@ -65,15 +65,16 @@ func (r Notification) GID() []argo.GID {
 	return gid
 }
 
-func IsClosedNetworkConnectionError(err error) bool {
+func isClosedNetworkConnectionError(err error) bool {
 	if e, ok := err.(*net.OpError); ok {
 		return "use of closed network connection" == e.Err.Error()
 	}
 	return false
 }
 
+// ConvertClosedNetworkConnectionError converts a TCP "closed network connection" error to a argo.ErrConnIsClosed
 func ConvertClosedNetworkConnectionError(err error) error {
-	if IsClosedNetworkConnectionError(err) {
+	if isClosedNetworkConnectionError(err) {
 		return argo.ErrConnIsClosed
 	}
 	return err

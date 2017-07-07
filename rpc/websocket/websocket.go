@@ -25,7 +25,7 @@ func (w *Websocket) Close() (err error) {
 	if delay == 0 {
 		delay = time.Second
 	}
-	err = w.Conn.WriteControl(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""), time.Now().Add(w.WriteWait))
+	err = w.Conn.WriteControl(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""), time.Now().Add(delay))
 	return
 }
 

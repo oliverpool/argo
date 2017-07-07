@@ -10,6 +10,7 @@ import (
 )
 
 func Example() {
+	// Error check omitted for concision
 	// Start the daemon (without blocking)
 	cmd := daemon.New().Cmd()
 	cmd.Start()

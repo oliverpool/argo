@@ -24,11 +24,11 @@ type NotificationHandler interface {
 // NotificationFullHandler can handle all notifications
 type NotificationFullHandler interface {
 	NotificationHandler
-	Started(GID []GID)
-	Paused(GID []GID)
-	Stopped(GID []GID)
-	Completed(GID []GID)
-	BtCompleted(GID []GID)
-	Error(GID []GID)
-	OtherIdentifier(Identifier string, GID []GID)
+	Started([]GID)
+	Paused([]GID)
+	Stopped([]GID)
+	Completed([]GID)
+	BtCompleted([]GID)
+	Error([]GID)
+	Unknown(identifier string, GID []GID)
 }

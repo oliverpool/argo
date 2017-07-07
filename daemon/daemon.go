@@ -30,7 +30,7 @@ func (a Aria2) Cmd() *exec.Cmd {
 func IsRunningOn(address string) bool {
 	conn, err := net.Dial("tcp", address)
 	if conn != nil {
-		conn.Close()
+		_ = conn.Close()
 	}
 	return err == nil
 }

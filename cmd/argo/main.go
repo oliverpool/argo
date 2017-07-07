@@ -46,8 +46,8 @@ func main() {
 	}
 	httpURL := "http" + strings.TrimLeft(*ariaURL, "ws")
 
-	notifier := debug.NotificationReceiver{
-		log.New(os.Stderr, "", log.LstdFlags),
+	notifier := debug.NotificationLogger{
+		Logger: log.New(os.Stderr, "", log.LstdFlags),
 	}
 
 	j, err := websocket.NewEmitter(*ariaURL)

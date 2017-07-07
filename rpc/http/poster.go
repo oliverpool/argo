@@ -32,7 +32,8 @@ func (j Poster) Post(v rpc.Request) (reply rpc.Response, err error) {
 	if err != nil {
 		return
 	}
-	defer r.Body.Close()
+	defer func() { _ = r.Body.Close() }()
+
 	err = json.NewDecoder(r.Body).Decode(&reply)
 	return
 }

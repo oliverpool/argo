@@ -6,11 +6,13 @@ import (
 	"github.com/oliverpool/argo"
 )
 
+// Adapter fulfills the argo.Caller interface, while allowing to choose a custom Poster and a secret tocken
 type Adapter struct {
 	Poster Poster
 	Secret string
 }
 
+// Call the given RPC method and unmarshall the response in reply.
 func (a Adapter) Call(method string, reply interface{}, options ...interface{}) error {
 	r := a.prepareRequest(method, options...)
 
@@ -29,6 +31,7 @@ func (a Adapter) Call(method string, reply interface{}, options ...interface{}) 
 	return err
 }
 
+// CallWithID is similar to Call, but write the returned id as well.
 func (a Adapter) CallWithID(method string, reply interface{}, id *string, options ...interface{}) error {
 	r := a.prepareRequest(method, options...)
 
@@ -85,6 +88,7 @@ func (a Adapter) Close() (err error) {
 	return a.Poster.Close()
 }
 
+// Adapt a Poster and a secret to fulfill the argo.Caller interface
 func Adapt(c Poster, secret string) Adapter {
 	return Adapter{
 		Poster: c,
