@@ -24,15 +24,10 @@ type NotificationHandler interface {
 	OtherIdentifier(Identifier string, GID []string)
 }
 
-// Response represents a JSON-RPC response to a request
-type Response struct {
-	GID string `json:"result"` // GID of the download
-	ID  string `json:"id"`
-}
-
 // Caller allows to perform Requests
 type Caller interface {
-	Call(method string, params ...interface{}) (Response, error)
+	Call(method string, reply interface{}, params ...interface{}) error
+	CallWithID(method string, reply interface{}, id *string, params ...interface{}) error
 	Close() error
 }
 

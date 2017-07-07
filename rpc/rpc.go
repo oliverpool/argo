@@ -1,7 +1,11 @@
 package rpc
 
-import "net"
-import "github.com/oliverpool/argo"
+import (
+	"encoding/json"
+	"net"
+
+	"github.com/oliverpool/argo"
+)
 
 // Request represents a JSON-RPC request sent by a client.
 type Request struct {
@@ -21,8 +25,9 @@ type Request struct {
 
 // Response represents a JSON-RPC response to a request
 type Response struct {
-	argo.Response
-	Error argo.ResponseError
+	Result json.RawMessage `json:"result"`
+	ID     string          `json:"id"`
+	Error  argo.ResponseError
 }
 
 // Poster allows to perform Requests

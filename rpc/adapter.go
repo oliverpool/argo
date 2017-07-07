@@ -1,21 +1,51 @@
 package rpc
 
-import "github.com/oliverpool/argo"
+import (
+	"encoding/json"
+
+	"github.com/oliverpool/argo"
+)
 
 type Adapter struct {
 	Poster Poster
 	Secret string
 }
 
-func (a Adapter) Call(method string, options ...interface{}) (argo.Response, error) {
+func (a Adapter) Call(method string, reply interface{}, options ...interface{}) error {
 	r := a.prepareRequest(method, options...)
 
 	resp, err := a.Poster.Post(r)
 
-	if err == nil && resp.Error.Code != 0 {
-		err = resp.Error
+	if err != nil {
+		return err
 	}
-	return resp.Response, err
+
+	if resp.Error.Code != 0 {
+		return resp.Error
+	}
+
+	err = json.Unmarshal(resp.Result, &reply)
+
+	return err
+}
+
+func (a Adapter) CallWithID(method string, reply interface{}, id *string, options ...interface{}) error {
+	r := a.prepareRequest(method, options...)
+
+	resp, err := a.Poster.Post(r)
+
+	if err != nil {
+		return err
+	}
+
+	if resp.Error.Code != 0 {
+		return resp.Error
+	}
+
+	*id = resp.ID
+	err = json.Unmarshal(resp.Result, &reply)
+
+	return err
 }
 
 func (a Adapter) prepareRequest(method string, options ...interface{}) Request {
