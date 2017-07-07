@@ -12,11 +12,11 @@ import (
 var EnableRPC = argo.Option{"enable-rpc": true}
 
 // ListenAll listens incoming JSON-RPC/XML-RPC requests on all network interfaces.
-// Default: listen only on local loopback interface (when option ommitted).
+// Default: listen only on local loopback interface (when option omitted).
 var ListenAll = argo.Option{"rpc-listen-all": true}
 
 // LogLevel to output to console. LEVEL is either debug, info, notice, warn or error.
-// Default: notice (when option ommitted)
+// Default: notice (when option omitted)
 func LogLevel(level string) argo.Option {
 	return argo.Option{"console-log-level": level}
 }
@@ -31,7 +31,7 @@ func Secret(secret string) argo.Option {
 
 // Port specifies a port number for JSON-RPC/XML-RPC server to listen to.
 // Possible Values: 1024 -65535.
-// Default: 6800 (when option ommitted)
+// Default: 6800 (when option omitted)
 func Port(port string) argo.Option {
 	return argo.Option{"rpc-listen-port": port}
 }

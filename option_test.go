@@ -23,7 +23,7 @@ func TestMergeOption(t *testing.T) {
 			Expected: Option{},
 		},
 		{
-			Input:    []Option{Option{}},
+			Input:    []Option{{}},
 			Expected: Option{},
 		},
 		{
@@ -31,19 +31,19 @@ func TestMergeOption(t *testing.T) {
 			Expected: Option{},
 		},
 		{
-			Input:    []Option{nil, Option{"a": "1"}, nil},
+			Input:    []Option{nil, {"a": "1"}, nil},
 			Expected: Option{"a": "1"},
 		},
 		{
-			Input:    []Option{Option{"a": "1"}},
+			Input:    []Option{{"a": "1"}},
 			Expected: Option{"a": "1"},
 		},
 		{
-			Input:    []Option{Option{"a": "1"}, Option{"a": "2"}},
+			Input:    []Option{{"a": "1"}, {"a": "2"}},
 			Expected: Option{"a": "2"},
 		},
 		{
-			Input:    []Option{Option{"a": "1"}, Option{"b": "2"}},
+			Input:    []Option{{"a": "1"}, {"b": "2"}},
 			Expected: Option{"a": "1", "b": "2"},
 		},
 	}

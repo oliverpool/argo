@@ -1,6 +1,5 @@
 package argo
 
-
 // GIDwithID contains the GID and the ID of the affected download.
 type GIDwithID struct {
 	GID GID
