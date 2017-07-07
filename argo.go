@@ -1,5 +1,10 @@
 package argo
 
+// GID is the identifier aria2 uses for each download.
+// The GID is hex string of 16 characters, thus [0-9a-zA-Z] are allowed and leading zeros must not be stripped.
+// The GID all 0 is reserved and must not be used. The GID must be unique, otherwise error is reported and the download is not added.
+type GID string
+
 // A Client is an aria2 client (https://aria2.github.io/)
 //
 // It can be constructed with the http.NewClient method of the subpackage argo/rpc/http
