@@ -95,7 +95,7 @@ type ServerInfo struct {
 // NewPosition denotes the resulting position from the ChangePosition method
 type NewPosition int
 
-// PositionStrategy describe the positionning strategy.
+// PositionStrategy describe the positioning strategy.
 // See RelativeToBeginning, RelativeToCurrent, RelativeToEnd
 type PositionStrategy string
 
