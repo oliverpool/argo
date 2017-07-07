@@ -154,29 +154,4 @@ func main() {
 		time.Sleep(time.Second)
 	}
 	log.Printf("Bye")
-
-	/*
-
-
-		var err error
-		rpcc, err = rpc.New(*rpcURI, *rpcSecret)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			os.Exit(2)
-		}
-		if flag.NArg() == 0 {
-			fmt.Fprintf(os.Stderr, "usage: argo {CMD} {PARAMETERS}...\n")
-			flag.PrintDefaults()
-			os.Exit(1)
-		}
-		args := flag.Args()
-		if cmd, ok := cmds[args[0]]; ok {
-			err = cmd(args[1:]...)
-		} else {
-			err = errInvalidCmd
-		}
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-		}
-	*/
 }
