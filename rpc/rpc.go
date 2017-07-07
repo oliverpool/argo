@@ -46,7 +46,7 @@ type Notification struct {
 
 	// Object to pass as request parameter to the method.
 	Params []struct {
-		GID string `json:"gid"` // GID of the download
+		GID argo.GID `json:"gid"` // GID of the download
 	} `json:"params"`
 }
 
@@ -56,8 +56,8 @@ func (r Notification) Identifier() string {
 }
 
 // GID gathers the GID of the notification
-func (r Notification) GID() []string {
-	gid := make([]string, len(r.Params))
+func (r Notification) GID() []argo.GID {
+	gid := make([]argo.GID, len(r.Params))
 	for i, g := range r.Params {
 		gid[i] = g.GID
 	}

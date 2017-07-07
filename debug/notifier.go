@@ -12,25 +12,25 @@ type NotificationReceiver struct {
 	Logger *log.Logger
 }
 
-func (d NotificationReceiver) Started(GID []string) {
+func (d NotificationReceiver) Started(GID []argo.GID) {
 	d.Logger.Printf("%s started.\n", GID)
 }
-func (d NotificationReceiver) Paused(GID []string) {
+func (d NotificationReceiver) Paused(GID []argo.GID) {
 	d.Logger.Printf("%s paused.\n", GID)
 }
-func (d NotificationReceiver) Stopped(GID []string) {
+func (d NotificationReceiver) Stopped(GID []argo.GID) {
 	d.Logger.Printf("%s stopped.\n", GID)
 }
-func (d NotificationReceiver) Completed(GID []string) {
+func (d NotificationReceiver) Completed(GID []argo.GID) {
 	d.Logger.Printf("%s completed.\n", GID)
 }
-func (d NotificationReceiver) Error(GID []string) {
+func (d NotificationReceiver) Error(GID []argo.GID) {
 	d.Logger.Printf("%s error.\n", GID)
 }
-func (d NotificationReceiver) BtCompleted(GID []string) {
+func (d NotificationReceiver) BtCompleted(GID []argo.GID) {
 	d.Logger.Printf("bt %s completed.\n", GID)
 }
-func (d NotificationReceiver) OtherIdentifier(ident string, GID []string) {
+func (d NotificationReceiver) OtherIdentifier(ident string, GID []argo.GID) {
 	d.Logger.Printf("Unknown %s for %s.\n", ident, GID)
 }
 func (d NotificationReceiver) ReceptionError(err error) bool {

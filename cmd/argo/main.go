@@ -49,7 +49,7 @@ func main() {
 		log.New(os.Stderr, "", log.LstdFlags),
 	}
 
-	j, err := websocket.NewReceiver(*ariaURL)
+	j, err := websocket.NewEmitter(*ariaURL)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -7,6 +7,13 @@ type Client struct {
 	Caller Caller
 }
 
+// Caller allows to perform requests to an aria2 instance
+type Caller interface {
+	Call(method string, reply interface{}, params ...interface{}) error
+	CallWithID(method string, reply interface{}, id *string, params ...interface{}) error
+	Close() error
+}
+
 // Close gracefully closes the Caller
 func (c Client) Close() (err error) {
 	return c.Caller.Close()
@@ -14,11 +21,4 @@ func (c Client) Close() (err error) {
 
 func (c Client) mergeOptions(options ...Option) Option {
 	return mergeOptions(options...)
-}
-
-// Caller allows to perform Requests
-type Caller interface {
-	Call(method string, reply interface{}, params ...interface{}) error
-	CallWithID(method string, reply interface{}, id *string, params ...interface{}) error
-	Close() error
 }

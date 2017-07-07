@@ -47,14 +47,14 @@ func (c Client) AddMetalink(content []byte, options ...Option) (reply GIDs, err 
 // Remove the download denoted by gid (string).
 // If the specified download is in progress, it is first stopped. The status of the removed download becomes removed.
 // This method returns GID of removed download.
-func (c Client) Remove(gid string) (reply GID, err error) {
+func (c Client) Remove(gid GID) (reply GID, err error) {
 	err = c.Caller.Call("aria2.remove", &reply, gid)
 	return
 }
 
 // ForceRemove the download denoted by gid.
 // This method behaves just like Remove() except that this method removes the download without performing any actions which take time, such as contacting BitTorrent trackers to unregister the download first.
-func (c Client) ForceRemove(gid string) (reply GID, err error) {
+func (c Client) ForceRemove(gid GID) (reply GID, err error) {
 	err = c.Caller.Call("aria2.forceRemove", &reply, gid)
 	return
 }
@@ -62,7 +62,7 @@ func (c Client) ForceRemove(gid string) (reply GID, err error) {
 // Pause the download denoted by gid (string).
 // The status of paused download becomes paused. If the download was active, the download is placed in the front of waiting queue. While the status is paused, the download is not started. To change status to waiting, use the Unpause() method.
 // This method returns GID of removed download.
-func (c Client) Pause(gid string) (reply GID, err error) {
+func (c Client) Pause(gid GID) (reply GID, err error) {
 	err = c.Caller.Call("aria2.pause", &reply, gid)
 	return
 }
@@ -76,7 +76,7 @@ func (c Client) PauseAll() (reply Ok, err error) {
 
 // ForcePause behaves just like Pause() except that this method pauses downloads without performing any actions which take time, such as contacting BitTorrent trackers to unregister the download first.
 // This method returns GID of removed download.
-func (c Client) ForcePause(gid string) (reply GID, err error) {
+func (c Client) ForcePause(gid GID) (reply GID, err error) {
 	err = c.Caller.Call("aria2.forcePause", &reply, gid)
 	return
 }
@@ -90,7 +90,7 @@ func (c Client) ForcePauseAll() (reply Ok, err error) {
 
 // Unpause changes the status of the download denoted by gid (string) from paused to waiting, making the download eligible to be restarted.
 // This method returns GID of removed download.
-func (c Client) Unpause(gid string) (reply GID, err error) {
+func (c Client) Unpause(gid GID) (reply GID, err error) {
 	err = c.Caller.Call("aria2.unpause", &reply, gid)
 	return
 }
@@ -104,7 +104,7 @@ func (c Client) UnpauseAll() (reply Ok, err error) {
 
 // TellStatus returns the URIs used in the download denoted by gid (string).
 // keys is an array of strings. If specified, the response contains only keys in the keys array. If keys is empty or omitted, the response contains all keys. This is useful when you just want specific keys and avoid unnecessary transfers.
-func (c Client) TellStatus(gid string, keys ...string) (reply StatusInfo, err error) {
+func (c Client) TellStatus(gid GID, keys ...string) (reply StatusInfo, err error) {
 	if len(keys) > 0 {
 		err = c.Caller.Call("aria2.tellStatus", &reply, gid, keys)
 	} else {
@@ -114,25 +114,25 @@ func (c Client) TellStatus(gid string, keys ...string) (reply StatusInfo, err er
 }
 
 // GetURIs returns the URIs used in the download denoted by gid (string).
-func (c Client) GetURIs(gid string) (reply []URIInfo, err error) {
+func (c Client) GetURIs(gid GID) (reply []URIInfo, err error) {
 	err = c.Caller.Call("aria2.getUris", &reply, gid)
 	return
 }
 
 // GetFiles returns the URIs used in the download denoted by gid (string).
-func (c Client) GetFiles(gid string) (reply []FileInfo, err error) {
+func (c Client) GetFiles(gid GID) (reply []FileInfo, err error) {
 	err = c.Caller.Call("aria2.getFiles", &reply, gid)
 	return
 }
 
 // GetPeers returns a list peers of the download denoted by gid (string). This method is for BitTorrent only.
-func (c Client) GetPeers(gid string) (reply []PeerInfo, err error) {
+func (c Client) GetPeers(gid GID) (reply []PeerInfo, err error) {
 	err = c.Caller.Call("aria2.getPeers", &reply, gid)
 	return
 }
 
 // GetServers returns currently connected HTTP(S)/FTP/SFTP servers of the download denoted by gid (string).
-func (c Client) GetServers(gid string) (reply []ServerInfo, err error) {
+func (c Client) GetServers(gid GID) (reply []ServerInfo, err error) {
 	err = c.Caller.Call("aria2.getServers", &reply, gid)
 	return
 }
@@ -188,7 +188,7 @@ func (c Client) TellStopped(offset int, num int, keys ...string) (reply []Status
 // strategy is a PositionStrategy.
 // If the destination position is less than 0 or beyond the end of the queue, it moves the download to the beginning or the end of the queue respectively.
 // The response is an integer denoting the resulting position.
-func (c Client) ChangePosition(gid string, pos int, strategy PositionStrategy) (reply NewPosition, err error) {
+func (c Client) ChangePosition(gid GID, pos int, strategy PositionStrategy) (reply NewPosition, err error) {
 	err = c.Caller.Call("aria2.changePosition", &reply, gid, pos, strategy)
 	return
 }
@@ -199,7 +199,7 @@ func (c Client) ChangePosition(gid string, pos int, strategy PositionStrategy) (
 // URIs are appended to the back of the list (to choose position, see ChangeURIWithPosition).
 // When removing an URI, if the same URIs exist in download, only one of them is removed for each URI in delUris. In other words, if there are three URIs http://example.org/aria2 and you want remove them all, you have to specify (at least) 3 http://example.org/aria2 in delUris.
 // This method returns a list which contains two integers. The first integer is the number of URIs deleted. The second integer is the number of URIs added.
-func (c Client) ChangeURI(gid string, fileIndex int, delURIs, addURIs []string) (reply DeletionAddition, err error) {
+func (c Client) ChangeURI(gid GID, fileIndex int, delURIs, addURIs []string) (reply DeletionAddition, err error) {
 	err = c.Caller.Call("aria2.changeUri", &reply, gid, fileIndex, delURIs, addURIs)
 	return
 }
@@ -212,7 +212,7 @@ func (c Client) ChangeURI(gid string, fileIndex int, delURIs, addURIs []string) 
 // This method first executes the removal and then the addition. position is the position after URIs are removed, not the position when this method is called.
 // When removing an URI, if the same URIs exist in download, only one of them is removed for each URI in delUris. In other words, if there are three URIs http://example.org/aria2 and you want remove them all, you have to specify (at least) 3 http://example.org/aria2 in delUris.
 // This method returns a list which contains two integers. The first integer is the number of URIs deleted. The second integer is the number of URIs added.
-func (c Client) ChangeURIWithPosition(gid string, fileIndex int, delURIs, addURIs []string, position int) (reply DeletionAddition, err error) {
+func (c Client) ChangeURIWithPosition(gid GID, fileIndex int, delURIs, addURIs []string, position int) (reply DeletionAddition, err error) {
 	err = c.Caller.Call("aria2.changeUri", &reply, gid, fileIndex, delURIs, addURIs, position)
 	return
 }
@@ -220,7 +220,7 @@ func (c Client) ChangeURIWithPosition(gid string, fileIndex int, delURIs, addURI
 // GetOption returns options of the download denoted by gid.
 // The response is a struct where keys are the names of options.
 // Note that this method does not return options which have no default value and have not been set on the command-line, in configuration files or RPC methods.
-func (c Client) GetOption(gid string) (reply Option, err error) {
+func (c Client) GetOption(gid GID) (reply Option, err error) {
 	err = c.Caller.Call("aria2.getOption", &reply, gid)
 	return
 }
@@ -244,7 +244,7 @@ func (c Client) GetOption(gid string) (reply Option, err error) {
 // max-upload-limit
 //
 // This method returns OK for success.
-func (c Client) ChangeOption(gid string, options ...Option) (reply Ok, err error) {
+func (c Client) ChangeOption(gid GID, options ...Option) (reply Ok, err error) {
 	opt := c.mergeOptions(options...)
 	err = c.Caller.Call("aria2.changeOption", &reply, gid, opt)
 	return
@@ -305,7 +305,7 @@ func (c Client) PurgeDownloadResult() (reply Ok, err error) {
 }
 
 // RemoveDownloadResult removes a completed/error/removed download denoted by gid from memory.
-func (c Client) RemoveDownloadResult(gid string) (reply Ok, err error) {
+func (c Client) RemoveDownloadResult(gid GID) (reply Ok, err error) {
 	err = c.Caller.Call("aria2.removeDownloadResult", &reply, gid)
 	return
 }

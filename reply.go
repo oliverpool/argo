@@ -5,13 +5,13 @@ type GID string
 
 // GIDwithID contains the GID and the ID of the affected download.
 type GIDwithID struct {
-	GID string
+	GID GID
 	ID  string `json:"id"`
 }
 
 // GIDs (and ID of the call) of the affected downloads.
 type GIDs struct {
-	GIDs []string
+	GIDs []GID
 	ID   string `json:"id"`
 }
 
@@ -95,7 +95,7 @@ type ServerInfo struct {
 	} `json:"servers"` // A list of structs which contain the following keys.
 }
 
-// NewPosition denotes the resulting position.
+// NewPosition denotes the resulting position from the ChangePosition method
 type NewPosition int
 
 // PositionStrategy describe the positionning strategy.
