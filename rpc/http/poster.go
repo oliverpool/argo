@@ -1,3 +1,4 @@
+// Package http implements http communication with the aria2 daemon
 package http
 
 import (

@@ -1,3 +1,4 @@
+// Package rpc handles the rpc communication with the aria2 dameon
 package rpc
 
 import (

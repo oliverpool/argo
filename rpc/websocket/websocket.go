@@ -1,3 +1,4 @@
+// Package websocket implements websocket communication with the aria2 daemon
 package websocket
 
 import (

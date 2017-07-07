@@ -14,6 +14,7 @@ import (
 	"github.com/oliverpool/argo"
 	"github.com/oliverpool/argo/daemon"
 	"github.com/oliverpool/argo/debug"
+	"github.com/oliverpool/argo/notification"
 	"github.com/oliverpool/argo/option"
 	"github.com/oliverpool/argo/rpc/http"
 	"github.com/oliverpool/argo/rpc/websocket"
@@ -141,7 +142,7 @@ func main() {
 		j2.Close()
 	}()
 
-	argo.ForwardNotifications(j, notifier)
+	notification.Forward(j, notifier)
 
 	reply, err := jhttpr.Shutdown()
 	if err != nil {
