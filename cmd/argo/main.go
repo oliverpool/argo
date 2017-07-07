@@ -95,27 +95,47 @@ func main() {
 
 		//uri := []string{"https://static.ranchcomputing.com/css/topbar.1.css"}
 
-		// reply, err := jhttpr.AddUri(uri1, dir, argo.Option{"id": "torrent"})
+		//*
+		reply, err := jhttpr.AddURI(uri1, dir, argo.Option{"id": "torrent"})
+		/*/
 		reply, err := jhttpr.AddTorrent(torrentContent, dir)
+
+		// time.Sleep(15 * time.Second)
+		//*/
 		if err != nil {
 			log.Printf("%#v", err)
 			panic(err)
 		}
 		log.Printf("%#v", reply)
 
-		reply, err = jhttpr.AddUri(uri2, dir, argo.Option{"id": 42})
+		reply, err = jhttpr.AddURI(uri2, dir, argo.Option{"id": 42})
 		if err != nil {
 			log.Printf("%#v", err)
 			panic(err)
 		}
 		log.Printf("%#v", reply)
 
-		reply, err = jhttpr.AddUri(uri3, dir0)
+		reply, err = jhttpr.AddURI(uri3, dir0)
 		if err != nil {
 			log.Printf("%#v", err)
 			panic(err)
 		}
 		log.Printf("%#v", reply)
+		g := reply.GID
+
+		time.Sleep(1000 * time.Millisecond)
+
+		//*
+
+		_ = g
+		jhttpr.ChangeOption(g, argo.Option{"max-download-limit": "20K"})
+		reply2, err := jhttpr.ListNotifications()
+		if err != nil {
+			log.Printf("%#v", err)
+		}
+		log.Printf("%#v", reply2)
+
+		//*/
 
 		<-ctx.Done()
 		j.Close()
