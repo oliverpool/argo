@@ -12,7 +12,6 @@ import (
 	"io/ioutil"
 
 	"github.com/oliverpool/argo"
-	"github.com/oliverpool/argo/aria2"
 	"github.com/oliverpool/argo/daemon"
 	"github.com/oliverpool/argo/debug"
 	"github.com/oliverpool/argo/option"
@@ -142,7 +141,7 @@ func main() {
 		j2.Close()
 	}()
 
-	aria2.ForwardNotifications(j, notifier)
+	argo.ForwardNotifications(j, notifier)
 
 	reply, err := jhttpr.Shutdown()
 	if err != nil {
