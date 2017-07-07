@@ -1,13 +1,6 @@
 package argo
 
-import (
-	"encoding/base64"
-	"errors"
-)
-
-type Client struct {
-	Caller Caller
-}
+import "encoding/base64"
 
 // AddURI adds a new download
 // - uris is an array of HTTP/FTP/SFTP/BitTorrent URIs (strings) pointing to the same resource. If you mix URIs pointing to different resources, then the download may fail or be corrupted without aria2 complaining. When adding BitTorrent Magnet URIs, uris must have only one element and it should be BitTorrent Magnet URI. options is a struct and its members are pairs of option name and value.
@@ -345,41 +338,4 @@ func (c Client) ForceShutdown() (reply Ok, err error) {
 func (c Client) SaveSession() (reply Ok, err error) {
 	err = c.Caller.Call("aria2.saveSession", &reply)
 	return
-}
-
-// Multicall TO BE DONE
-// see https://aria2.github.io/manual/en/html/aria2c.html#system.multicall
-func (c Client) Multicall() (reply Ok, err error) {
-	return Ok(""), errors.New("Not implemented")
-}
-
-// ListMethods returns all the available RPC methods .
-func (c Client) ListMethods() (reply []string, err error) {
-	err = c.Caller.Call("system.listMethods", &reply)
-	return
-}
-
-// ListNotifications returns all the available RPC notifications
-func (c Client) ListNotifications() (reply []string, err error) {
-	err = c.Caller.Call("system.listNotifications", &reply)
-	return
-}
-
-// Close gracefully closes the Caller
-func (c Client) Close() (err error) {
-	return c.Caller.Close()
-}
-
-func (c Client) mergeOptions(options ...Option) Option {
-	return mergeOptions(options...)
-}
-
-func mergeOptions(options ...Option) Option {
-	opt := Option{}
-	for _, o := range options {
-		for k, v := range o {
-			opt[k] = v
-		}
-	}
-	return opt
 }

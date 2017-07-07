@@ -2,6 +2,29 @@ package argo
 
 import "fmt"
 
+type Client struct {
+	Caller Caller
+}
+
+// Close gracefully closes the Caller
+func (c Client) Close() (err error) {
+	return c.Caller.Close()
+}
+
+func (c Client) mergeOptions(options ...Option) Option {
+	return mergeOptions(options...)
+}
+
+func mergeOptions(options ...Option) Option {
+	opt := Option{}
+	for _, o := range options {
+		for k, v := range o {
+			opt[k] = v
+		}
+	}
+	return opt
+}
+
 // NotificationReceiver allows to receive Notifications
 type NotificationReceiver interface {
 	Receive() (Notification, error)
