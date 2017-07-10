@@ -6,6 +6,11 @@ package argo
 // The GID all 0 is reserved and must not be used. The GID must be unique, otherwise error is reported and the download is not added.
 type GID string
 
+// String returns the value as string
+func (g GID) String() string {
+	return string(g)
+}
+
 // A Client is an aria2 client (https://aria2.github.io/)
 //
 // It can be constructed with the http.NewClient method of the subpackage argo/rpc/http
