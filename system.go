@@ -1,6 +1,6 @@
 package argo
 
-/*// Multicall is not implemented, mainly because it is quite comlicated (and the Caller.Call is probably not really adapted)
+/*// Multicall is not implemented, mainly because it is quite complicated (and the Caller.Call is probably not really adapted)
 // Moreover it is weakly type (interface{}) which should not be encouraged to use
 // see https://aria2.github.io/manual/en/html/aria2c.html#system.multicall
 func (c Client) Multicall() (reply Ok, err error) {

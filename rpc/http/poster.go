@@ -9,6 +9,7 @@ import (
 
 	"github.com/oliverpool/argo"
 	"github.com/oliverpool/argo/rpc"
+	"github.com/pkg/errors"
 )
 
 // SubPoster allows to POST an io.Reader to an URL
@@ -26,15 +27,18 @@ type Poster struct {
 func (j Poster) Post(v rpc.Request) (reply rpc.Response, err error) {
 	pay, err := json.Marshal(v)
 	if err != nil {
+		err = errors.Wrap(err, "json.Marshal failed")
 		return
 	}
 	r, err := j.Client.Post(j.URL, "application/json", bytes.NewReader(pay))
 	if err != nil {
+		err = errors.Wrap(err, "client.Post failed")
 		return
 	}
 	defer func() { _ = r.Body.Close() }()
 
 	err = json.NewDecoder(r.Body).Decode(&reply)
+	err = errors.Wrap(err, "json.Decode failed")
 	return
 }
 
