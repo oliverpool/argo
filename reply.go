@@ -1,5 +1,9 @@
 package argo
 
+import (
+	"encoding/json"
+)
+
 // GIDwithID contains the GID and the ID of the affected download.
 type GIDwithID struct {
 	GID GID
@@ -43,14 +47,30 @@ type StatusInfo struct {
 	Dir             string     `json:"dir"`             // Directory to save files.
 	Files           []FileInfo `json:"files"`           // Returns the list of files. The elements of this list are the same structs used in aria2.getFiles() method.
 	BitTorrent      struct {
-		AnnounceList []string `json:"announceList"` // List of lists of announce URIs. If the torrent contains announce and no announce-list, announce is converted to the announce-list format.
-		Comment      string   `json:"comment"`      // The comment of the torrent. comment.utf-8 is used if available.
-		CreationDate string   `json:"creationDate"` // The creation time of the torrent. The value is an integer since the epoch, measured in seconds.
-		Mode         string   `json:"mode"`         // File mode of the torrent. The value is either single or multi.
+		AnnounceList []AnnounceList `json:"announceList"` // List of lists of announce URIs. If the torrent contains announce and no announce-list, announce is converted to the announce-list format.
+		Comment      string         `json:"comment"`      // The comment of the torrent. comment.utf-8 is used if available.
+		CreationDate string         `json:"creationDate"` // The creation time of the torrent. The value is an integer since the epoch, measured in seconds.
+		Mode         string         `json:"mode"`         // File mode of the torrent. The value is either single or multi.
 		Info         struct {
 			Name string `json:"name"` // name in info dictionary. name.utf-8 is used if available.
 		} `json:"info"` // Struct which contains data from Info dictionary. It contains following keys.
 	} `json:"bittorrent"` // Struct which contains information retrieved from the .torrent (file). BitTorrent only. It contains following keys.
+}
+
+type AnnounceList []string
+
+func (a *AnnounceList) UnmarshalJSON(b []byte) error {
+	var sa []string
+	if err := json.Unmarshal(b, &sa); err == nil {
+		*a = append(*a, sa...)
+		return nil
+	}
+	var s string
+	if err := json.Unmarshal(b, &s); err != nil {
+		return err
+	}
+	*a = AnnounceList{s}
+	return nil
 }
 
 // URIInfo represents an element of response of aria2.getUris
